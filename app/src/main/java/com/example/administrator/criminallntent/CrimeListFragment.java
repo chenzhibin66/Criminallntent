@@ -1,5 +1,6 @@
 package com.example.administrator.criminallntent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,12 +31,23 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updataUI();
+    }
+
     private void updataUI(){
         CrimeLab crimeLab=CrimeLab.get(getActivity());
         List<Crime> crimes=crimeLab.getCrimes();
+        if (mAdapter==null){
+            mAdapter =new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        }else {
+            mAdapter.notifyDataSetChanged();
+        }
 
-        mAdapter =new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -61,7 +73,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(),mCrime.getTitle() +"clicked",Toast.LENGTH_SHORT).show();
+            Intent intent=CrimePagerActivity.newIntent(getActivity(),mCrime.getId());
+            startActivity(intent);
         }
     }
 
